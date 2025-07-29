@@ -1,0 +1,61 @@
+name: React App CI/CD Without Artifacts (Two-Stage)
+
+on:
+  push:
+    paths:
+      - "06-artifacts/react-app/**"
+    branches: [main, develop]
+  pull_request:
+    paths:
+      - "06-artifacts/react-app/**"
+    branches: [main]
+
+env:
+  NODE_VERSION: "18"
+  APP_PATH: "06-artifacts/react-app"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install dependencies
+        working-directory: ${{ env.APP_PATH }}
+        run: npm install
+      - name: Build app
+        working-directory: ${{ env.APP_PATH }}
+        run: npm run build
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install dependencies
+        working-directory: ${{ env.APP_PATH }}
+        run: npm install
+      - name: Build app
+        working-directory: ${{ env.APP_PATH }}
+        run: npm run build
+      - name: Build Docker image
+        working-directory: ${{ env.APP_PATH }}
+        run: |
+          docker build -t react-artifact-demo .
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Push Docker image to Docker Hub
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/react-artifact-demo
+          docker tag react-artifact-demo:latest $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest
