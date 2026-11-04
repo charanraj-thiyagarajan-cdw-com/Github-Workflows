@@ -1,0 +1,28 @@
+name: 04 - Push and Pull Request Triggers
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "v2/react-app/**"
+    tags:
+      - "v*.*.*"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+    paths:
+      - "v2/react-app/**"
+
+jobs:
+  code-change-check:
+    name: Code Change Trigger Handler
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report Trigger Event
+        run: |
+          echo "Triggered by event: ${{ github.event_name }}"
+          echo "Target branch/ref:  ${{ github.ref_name }}"
+          echo "Commit SHA:         ${{ github.sha }}"

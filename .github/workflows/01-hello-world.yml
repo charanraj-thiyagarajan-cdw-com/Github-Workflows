@@ -1,0 +1,17 @@
+name: 01 - Hello World Recap
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  hello-job:
+    name: Hello World Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Welcome Message
+        run: |
+          echo "Hello from GitHub Actions!"
+          echo "Runner OS: $RUNNER_OS"
+          echo "Triggered by: ${{ github.actor }}"
