@@ -4,7 +4,9 @@ properties:
       external: true
       targetPort: 80
   template:
+    containers:
+      - name: react-app
+        image: DOCKER_IMAGE_PLACEHOLDER
     scale:
       minReplicas: 1
       maxReplicas: 1
-
