@@ -2,12 +2,8 @@ name: 05 - React App Build and Test
 
 on:
   push:
-    paths:
-      - "v2/react-app/**"
     branches: [main, develop]
   pull_request:
-    paths:
-      - "v2/react-app/**"
     branches: [main]
   workflow_dispatch:
 

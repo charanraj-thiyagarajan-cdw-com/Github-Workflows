@@ -5,16 +5,12 @@ on:
     branches:
       - main
       - develop
-    paths:
-      - "v2/react-app/**"
     tags:
       - "v*.*.*"
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - main
-    paths:
-      - "v2/react-app/**"
 
 jobs:
   code-change-check:

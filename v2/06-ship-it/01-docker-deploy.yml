@@ -2,8 +2,6 @@ name: 06 - Docker Build and Push to Docker Hub
 
 on:
   push:
-    paths:
-      - "v2/react-app/**"
     branches: [main]
   workflow_dispatch:
 

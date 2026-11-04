@@ -2,8 +2,6 @@ name: 06 - Azure Container Apps Deploy
 
 on:
   push:
-    paths:
-      - "v2/react-app/**"
     branches: [main]
   workflow_dispatch:
 
@@ -75,6 +73,9 @@ jobs:
     needs: [test, dockerhub]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -89,6 +90,5 @@ jobs:
           registryUrl: docker.io
           registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
           registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
-          ingress: external
-          targetPort: 80
+          yamlConfigPath: ${{ github.workspace }}/v2/react-app/container-app.yml
           disableTelemetry: true
