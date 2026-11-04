@@ -85,5 +85,10 @@ jobs:
         with:
           containerAppName: react-app
           resourceGroup: 1-91ad8cf6-playground-sandbox
-          imageToDeploy: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          imageToDeploy: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+          registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
+          ingress: external
           targetPort: 80
+          disableTelemetry: true
