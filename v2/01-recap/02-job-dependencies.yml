@@ -1,0 +1,36 @@
+name: 02 - Job Dependencies (needs)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Code
+        run: |
+          echo "Compiling and packaging application..."
+          echo "Build complete."
+
+  test:
+    name: Test Stage
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Test Suite
+        run: |
+          echo "Running unit and integration tests..."
+          echo "All tests passed."
+
+  deploy:
+    name: Deploy Stage
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Application
+        run: |
+          echo "Deploying to target environment..."
+          echo "Deployment successful."

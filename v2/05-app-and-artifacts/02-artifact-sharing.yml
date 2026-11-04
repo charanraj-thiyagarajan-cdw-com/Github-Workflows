@@ -1,0 +1,62 @@
+name: 05 - React App Artifact Sharing
+
+on:
+  push:
+    paths:
+      - "v2/react-app/**"
+    branches: [main, develop]
+  pull_request:
+    paths:
+      - "v2/react-app/**"
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20"
+  APP_DIR: "v2/react-app"
+
+jobs:
+  build:
+    name: Build & Upload Artifact
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ${{ env.APP_DIR }}/package.json
+
+      - name: Install dependencies
+        working-directory: ${{ env.APP_DIR }}
+        run: npm install
+
+      - name: Build production bundle
+        working-directory: ${{ env.APP_DIR }}
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-app-build
+          path: ${{ env.APP_DIR }}/dist
+
+  use-artifact:
+    name: Download Artifact & Build Container
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react-app-build
+          path: ${{ env.APP_DIR }}/dist
+
+      - name: Build Docker image with downloaded artifact
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          docker build -t react-app:latest .

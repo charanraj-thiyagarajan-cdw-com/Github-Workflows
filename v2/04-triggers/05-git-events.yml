@@ -1,0 +1,16 @@
+name: 04 - Git Branch and Tag Lifecycle Events
+
+on:
+  create:
+  delete:
+
+jobs:
+  git-lifecycle:
+    name: Branch / Tag Lifecycle Handler
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Ref Change
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Ref:   ${{ github.event.ref }}"
+          echo "Type:  ${{ github.event.ref_type }}"
