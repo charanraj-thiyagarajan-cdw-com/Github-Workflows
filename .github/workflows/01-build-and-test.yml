@@ -1,0 +1,44 @@
+name: 05 - React App Build and Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20"
+  APP_DIR: "v2/react-app"
+
+jobs:
+  build:
+    name: Build React App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ${{ env.APP_DIR }}/package.json
+
+      - name: Install dependencies
+        working-directory: ${{ env.APP_DIR }}
+        run: npm install
+
+      - name: Build production bundle
+        working-directory: ${{ env.APP_DIR }}
+        run: npm run build
+
+  test:
+    name: Test React App
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Run tests
+        working-directory: ${{ env.APP_DIR }}
+        run: npm test
