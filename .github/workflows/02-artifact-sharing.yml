@@ -1,4 +1,4 @@
-name: 05 - React App Build and Test
+name: 05 - React App Artifact Sharing
 
 on:
   push:
@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    name: Build React App
+    name: Build & Upload Artifact
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,12 +33,26 @@ jobs:
         working-directory: ${{ env.APP_DIR }}
         run: npm run build
 
-  test:
-    name: Test React App
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-app-build
+          path: ${{ env.APP_DIR }}/dist
+
+  use-artifact:
+    name: Download Artifact & Build Container
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
 
-      - name: Run tests
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react-app-build
+          path: ${{ env.APP_DIR }}/dist
+
+      - name: Build Docker image with downloaded artifact
         working-directory: ${{ env.APP_DIR }}
-        run: npm test
+        run: |
+          docker build -t react-app:latest .
